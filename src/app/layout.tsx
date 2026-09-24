@@ -26,6 +26,17 @@ export const metadata: Metadata = {
   title: "Bit Bladi — Authentic South Sudanese Food, Delivered",
   description:
     "Order authentic South Sudanese dishes in Nairobi. Browse the menu and order on WhatsApp.",
+  // Official Bit Bladi brand icons. `app/favicon.ico` auto-emits the .ico link
+  // (sizes="any"); these add the PNG tab icons, the iOS home-screen icon, and
+  // the PWA manifest (Android/Chrome install icons). Inherited by /en, /ar, /admin.
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default async function RootLayout({
