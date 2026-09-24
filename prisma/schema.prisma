@@ -1,10 +1,9 @@
-// Bit Bladi data model — single authoritative source for the public site + CMS.
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,28 +14,28 @@ model Category {
   nameAr    String
   sort      Int        @default(0)
   enabled   Boolean    @default(true)
-  items     FoodItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  items     FoodItem[]
 }
 
 model FoodItem {
   id         String   @id @default(cuid())
   nameEn     String
   nameAr     String
-  descEn     String   @default("")
-  descAr     String   @default("")
-  price      Int // whole units of the configured currency (e.g. KES 500)
+  descEn     String   @default("") @db.VarChar(1000)
+  descAr     String   @default("") @db.VarChar(1000)
+  price      Int
   image      String   @default("")
   categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  available  Boolean  @default(true) // false = Sold Out (still shown, not orderable)
-  visible    Boolean  @default(true) // false = Hidden (absent from public site)
+  available  Boolean  @default(true)
+  visible    Boolean  @default(true)
   featured   Boolean  @default(false)
   popular    Boolean  @default(false)
   sort       Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@index([categoryId])
 }
@@ -45,8 +44,8 @@ model Promotion {
   id        String    @id @default(cuid())
   titleEn   String
   titleAr   String
-  descEn    String    @default("")
-  descAr    String    @default("")
+  descEn    String    @default("") @db.VarChar(1000)
+  descAr    String    @default("") @db.VarChar(1000)
   image     String    @default("")
   active    Boolean   @default(true)
   startsAt  DateTime?
@@ -58,8 +57,8 @@ model Promotion {
 model Testimonial {
   id      String  @id @default(cuid())
   name    String
-  textEn  String
-  textAr  String  @default("")
+  textEn  String  @db.VarChar(1000)
+  textAr  String  @default("") @db.VarChar(1000)
   sort    Int     @default(0)
   enabled Boolean @default(true)
 }
@@ -71,15 +70,12 @@ model Media {
   createdAt DateTime @default(now())
 }
 
-// Customer reviews. Submitted publicly with no account; default PENDING and
-// hidden from the public site until an admin approves. `email` is optional and
-// never exposed through public endpoints. `status`: PENDING | APPROVED | REJECTED.
 model Review {
   id           String    @id @default(cuid())
   customerName String
-  rating       Int // 1–5, validated in application code (SQLite has no CHECK via Prisma)
-  reviewText   String
-  email        String? // optional + private, never returned publicly
+  rating       Int
+  reviewText   String    @db.Text
+  email        String?
   status       String    @default("PENDING")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -89,21 +85,16 @@ model Review {
   @@index([status, createdAt])
 }
 
-// Table reservations. Requested publicly with no account; default PENDING and
-// only visible/actioned in the admin. Date + time are stored as restaurant-local
-// strings (YYYY-MM-DD / HH:MM) to avoid timezone drift on discrete slots.
-// `status`: PENDING | CONFIRMED | REJECTED | CANCELLED | COMPLETED | NO_SHOW.
-// Notification fields: PENDING | SENT | FAILED | SKIPPED.
 model Reservation {
   id                String   @id @default(cuid())
-  code              String   @unique // human-readable, e.g. BB-2IZ5YB
+  code              String   @unique
   customerName      String
   customerPhone     String
   customerEmail     String
-  date              String // YYYY-MM-DD (restaurant-local)
-  time              String // HH:MM 24h (restaurant-local)
+  date              String
+  time              String
   guestCount        Int
-  specialRequests   String   @default("")
+  specialRequests   String   @default("") @db.VarChar(1000)
   status            String   @default("PENDING")
   preferredLanguage String   @default("en")
   assignedTable     String   @default("")
@@ -127,12 +118,11 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
-// Singleton row (id = "singleton") holding config + editable content JSON.
 model Settings {
   id             String   @id @default("singleton")
   businessName   String   @default("Bit Bladi")
   currency       String   @default("KES")
   whatsappNumber String   @default("254798022831")
-  content        String   @default("{}") // JSON blob: hero, about, delivery, contact, footer, seo
+  content        String   @db.Text
   updatedAt      DateTime @updatedAt
 }

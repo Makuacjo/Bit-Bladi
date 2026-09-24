@@ -10,7 +10,7 @@ source code**.
 
 - **Next.js 16** (App Router, TypeScript, Turbopack)
 - **Tailwind CSS v4** (design tokens in `src/app/globals.css`)
-- **Prisma 6 + SQLite** — single authoritative data source
+- **Prisma 6 + MySQL / MariaDB** — single authoritative data source (Hostinger-ready)
 - **Framer Motion** — subtle, premium motion
 - **Zustand** — client cart state (persisted to `localStorage`)
 - **jose** (JWT session cookies) + **bcryptjs** (password hashing) for admin auth
@@ -19,8 +19,8 @@ source code**.
 
 ```bash
 npm install                 # installs deps + runs `prisma generate`
-cp .env.example .env        # then edit AUTH_SECRET
-npm run db:push             # create the SQLite schema
+cp .env.example .env        # set DATABASE_URL (MySQL) + a strong AUTH_SECRET
+npm run db:migrate          # create the MySQL schema via Prisma Migrate
 npm run db:seed             # seed menu, categories, testimonials, settings, admin user
 npm run dev                 # http://localhost:3000
 ```
@@ -42,15 +42,17 @@ Public site: `http://localhost:3000/en` (or `/ar`). Admin: `http://localhost:300
 | `npm run build`     | Production build                                     |
 | `npm start`         | Run production build                                |
 | `npm run lint`      | ESLint                                              |
-| `npm run db:push`   | Apply Prisma schema to SQLite                        |
+| `npm run db:migrate`| Create/apply a dev migration (Prisma Migrate)        |
+| `npm run db:deploy` | Apply pending migrations (production)                |
+| `npm run db:push`   | Push schema without a migration (quick prototyping)  |
 | `npm run db:seed`   | Seed database                                        |
-| `npm run db:reset`  | Wipe + recreate + reseed                             |
+| `npm run db:reset`  | Wipe + re-migrate + reseed (dev only — destructive)  |
 
 ## Environment variables
 
 | Var             | Required | Notes                                                        |
 | --------------- | -------- | ------------------------------------------------------------ |
-| `DATABASE_URL`  | yes      | SQLite file, e.g. `file:./dev.db`                            |
+| `DATABASE_URL`  | yes      | MySQL connection, e.g. `mysql://user:pass@host:3306/db`      |
 | `AUTH_SECRET`   | yes      | Signs admin session cookies. Use a long random value.        |
 | `SITE_URL`      | no       | Absolute base URL for `robots.txt` / `sitemap.xml`           |
 | `ADMIN_EMAIL`   | no       | Overrides seeded admin email                                 |
@@ -124,21 +126,24 @@ layout applies `lang` + `dir` to `<html>`. Arabic uses the Tajawal font and full
 (logical CSS properties: `start/end`, `ms/me`, `ps/pe`). UI strings live in `lib/i18n.ts`;
 editable content is bilingual in the CMS.
 
-## Deployment
+## Deployment (Hostinger Web/Cloud, or any Node host)
 
-Runs on any Node host (Render, Railway, Fly, a VPS, etc.).
+Requires a MySQL/MariaDB database. On Hostinger, create one in hPanel → Databases and copy the
+credentials into `DATABASE_URL`.
 
 ```bash
 npm ci
-npm run db:push && npm run db:seed   # first deploy only
+npm run db:deploy                    # apply migrations (non-destructive)
+npm run db:seed                      # FIRST deploy only — seeds baseline content + admin
 npm run build
 npm start
 ```
 
-Set `AUTH_SECRET` and `SITE_URL` in the host environment. Uploaded images are written to
-`public/uploads` — use a persistent disk/volume there (or swap the upload route for object
-storage). SQLite suits a single-instance restaurant deployment; migrate the Prisma datasource to
-Postgres for multi-instance scaling.
+Set `DATABASE_URL`, `AUTH_SECRET`, and `SITE_URL` in the host environment (never commit them).
+`npm run db:deploy` (`prisma migrate deploy`) is safe to re-run on every deploy — it only applies
+pending migrations and never drops data. Do **not** run `db:seed` or `db:reset` against a
+production database with real orders/reviews. Uploaded images are written to `public/uploads` —
+use a persistent disk/volume there (or swap the upload route for object storage).
 
 ## Provenance
 

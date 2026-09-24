@@ -34,7 +34,7 @@ yarn-error.log*
 .env*
 !.env.example
 
-# database (SQLite dev)
+# database — legacy SQLite dev file kept locally as a pre-MySQL backup, never committed
 /prisma/*.db
 /prisma/*.db-journal
 

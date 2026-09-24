@@ -41,8 +41,8 @@ template.
   builds the message, WhatsApp sends it. No in-app payment or checkout.
 - Every `[lang]` route is force-dynamic; each admin edit revalidates the public
   site so changes appear immediately.
-- Single-instance restaurant deployment (SQLite); uploaded images live on disk
-  at `public/uploads`.
+- Restaurant deployment on MySQL/MariaDB (Hostinger Web/Cloud); uploaded images
+  live on disk at `public/uploads`.
 
 ## Capabilities and Constraints
 
