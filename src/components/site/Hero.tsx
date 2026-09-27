@@ -73,7 +73,11 @@ export function Hero({
             >
               <Image
                 src={images[safeIdx]}
-                alt=""
+                alt={
+                  rtl
+                    ? "أطباق سودانية جنوبية أصيلة في مطعم بيت بلدي، نيروبي"
+                    : "Authentic South Sudanese dishes at Bit Bladi restaurant in Nairobi"
+                }
                 fill
                 preload={safeIdx === 0}
                 sizes="100vw"

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { locales, getDict, type Lang } from "@/lib/i18n";
 import { getSettings, orderConfig } from "@/lib/data";
+import { buildAlternates, ogLocale, DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { CartDrawer } from "@/components/site/CartDrawer";
@@ -24,16 +25,29 @@ export async function generateMetadata({
   const { content } = await getSettings();
   const title = l === "ar" ? content.seo.title.ar : content.seo.title.en;
   const description = l === "ar" ? content.seo.description.ar : content.seo.description.en;
+  const ogImage = content.seo.ogImage || DEFAULT_OG_IMAGE;
+  // Home is served by this layout + [lang]/page.tsx, so the canonical/hreflang
+  // here describe the home route (""). Child routes (/menu, /reserve, /food/*,
+  // /locations/*) export their own generateMetadata that overrides these.
   return {
-    title,
+    // `absolute` keeps the home title verbatim (no "· Bit Bladi" template suffix).
+    title: { absolute: title },
     description,
+    alternates: buildAlternates(l, ""),
     openGraph: {
+      type: "website",
+      siteName: "Bit Bladi",
       title,
       description,
-      images: content.seo.ogImage ? [content.seo.ogImage] : undefined,
-      locale: l === "ar" ? "ar" : "en",
+      images: [{ url: ogImage }],
+      locale: ogLocale(l),
     },
-    alternates: { languages: { en: "/en", ar: "/ar" } },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 

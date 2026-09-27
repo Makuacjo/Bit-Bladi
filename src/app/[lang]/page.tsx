@@ -10,6 +10,8 @@ import {
 } from "@/components/site/HomeSections";
 import { MapSection } from "@/components/site/MapSection";
 import { Reviews } from "@/components/site/Reviews";
+import { JsonLd } from "@/components/site/JsonLd";
+import { restaurantJsonLd, websiteJsonLd } from "@/lib/seo";
 
 export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -26,30 +28,10 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   const spotlight = (featured.length ? featured : popular.length ? popular : menu).slice(0, 3);
 
   const c = settings.content;
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    name: settings.businessName,
-    servesCuisine: "South Sudanese",
-    priceRange: "$$",
-    telephone: c.contact.phone,
-    email: c.contact.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: c.contact.address.en,
-      addressLocality: "Nairobi",
-      addressCountry: "KE",
-    },
-    image: c.hero.images[0],
-    description: c.seo.description.en,
-  };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <JsonLd data={[restaurantJsonLd(settings), websiteJsonLd()]} />
       <Hero content={settings.content} lang={l} />
       <FeatureStrip lang={l} />
       <Featured items={spotlight} lang={l} dict={dict} />

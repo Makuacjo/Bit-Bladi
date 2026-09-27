@@ -38,8 +38,8 @@ export function Footer({
   const bottomNav = [
     { href: base, label: dict.nav.home },
     { href: `${base}/menu`, label: dict.nav.menu },
-    { href: `${base}#about`, label: dict.nav.about },
-    { href: `${base}#menu`, label: dict.nav.gallery },
+    { href: `${base}/food/south-sudanese-food`, label: lang === "ar" ? "الطعام السوداني الجنوبي" : "South Sudanese Food" },
+    { href: `${base}/locations/kilimani`, label: lang === "ar" ? "كيليماني" : "Kilimani" },
     { href: `${base}/reserve`, label: dict.reserve.nav },
     { href: `${base}#visit`, label: dict.nav.contact },
   ];

@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Playfair_Display, Hanken_Grotesk, Tajawal } from "next/font/google";
 import "./globals.css";
 import { isRtl, type Lang } from "@/lib/i18n";
+import { SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -23,9 +24,48 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  title: "Bit Bladi — Authentic South Sudanese Food, Delivered",
+  // metadataBase makes every relative OG/canonical URL resolve to the canonical
+  // production domain (never the temporary Hostinger preview host).
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Bit Bladi | South Sudanese Restaurant & Food in Nairobi",
+    template: "%s · Bit Bladi",
+  },
   description:
-    "Order authentic South Sudanese dishes in Nairobi. Browse the menu and order on WhatsApp.",
+    "Bit Bladi is a South Sudanese restaurant in Kilimani, Nairobi serving authentic, traditional South Sudanese and African food. Browse the menu and order on WhatsApp.",
+  applicationName: "Bit Bladi",
+  // Google Search Console domain/URL-prefix verification. Emits
+  // <meta name="google-site-verification" ...> into the global <head>,
+  // inherited by every public page (incl. the homepage).
+  verification: {
+    google: "pVbWxLdRb7-HLkR1mLLcTPlukWm_f-jDziu_SfyO5Xo",
+  },
+  keywords: [
+    "Bit Bladi",
+    "South Sudanese restaurant Nairobi",
+    "South Sudanese food",
+    "South Sudanese restaurant Kilimani",
+    "African restaurant Nairobi",
+    "Kisra",
+    "Ful",
+    "traditional South Sudanese food",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "Bit Bladi",
+    url: `${SITE_URL}/en`,
+    title: "Bit Bladi | South Sudanese Restaurant & Food in Nairobi",
+    description:
+      "Authentic South Sudanese cuisine in Kilimani, Nairobi — traditional dishes, grills and more. Browse the menu and order on WhatsApp.",
+    images: [{ url: DEFAULT_OG_IMAGE }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bit Bladi | South Sudanese Restaurant & Food in Nairobi",
+    description:
+      "Authentic South Sudanese cuisine in Kilimani, Nairobi. Browse the menu and order on WhatsApp.",
+    images: [DEFAULT_OG_IMAGE],
+  },
   // Official Bit Bladi brand icons. `app/favicon.ico` auto-emits the .ico link
   // (sizes="any"); these add the PNG tab icons, the iOS home-screen icon, and
   // the PWA manifest (Android/Chrome install icons). Inherited by /en, /ar, /admin.

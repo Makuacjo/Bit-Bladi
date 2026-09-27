@@ -176,17 +176,21 @@ export function About({ lang }: { lang: Lang }) {
               <Eyebrow>{d.home.storyEyebrow}</Eyebrow>
               <h2 className="mt-3 font-display text-4xl font-bold text-cream md:text-5xl">{d.home.storyHeading}</h2>
               <p className="mt-5 leading-relaxed text-cream/80">{d.home.storyBody}</p>
-              <ScrollLink href={`/${lang}#menu`} className="btn btn-outline mt-8 text-sm text-cream">
+              <Link href={`/${lang}/food/south-sudanese-food`} className="btn btn-outline mt-8 text-sm text-cream">
                 {d.home.learnMore}
                 <ArrowRight />
-              </ScrollLink>
+              </Link>
             </div>
           </Reveal>
         </div>
         <div className="relative min-h-[16rem] lg:min-h-full">
           {/* Reuses an existing image asset — not replaced or edited. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/uploads/hero-2.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src="/uploads/hero-2.jpg"
+            alt={lang === "ar" ? "أجواء مطعم بيت بلدي في كيليماني، نيروبي" : "The dining atmosphere at Bit Bladi in Kilimani, Nairobi"}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-brown/60 via-transparent to-transparent" />
         </div>
       </div>

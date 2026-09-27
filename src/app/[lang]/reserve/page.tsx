@@ -3,11 +3,18 @@ import { getDict, type Lang } from "@/lib/i18n";
 import { getSettings } from "@/lib/data";
 import { RES_CONFIG } from "@/lib/reservations";
 import { ReservationForm } from "@/components/site/ReservationForm";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
-  const d = getDict((lang as Lang) || "en");
-  return { title: `${d.reserve.title} — Bit Bladi`, description: d.reserve.subtitle };
+  const l = (lang as Lang) || "en";
+  const d = getDict(l);
+  return pageMetadata({
+    lang: l,
+    path: "/reserve",
+    title: d.reserve.title,
+    description: d.reserve.subtitle,
+  });
 }
 
 export default async function ReservePage({ params }: { params: Promise<{ lang: string }> }) {
