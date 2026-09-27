@@ -1,9 +1,16 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.SITE_URL || "http://localhost:3000";
   return {
-    rules: { userAgent: "*", allow: "/", disallow: "/admin" },
-    sitemap: `${base}/sitemap.xml`,
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      // Private/non-indexable areas only. CSS/JS/images and all public pages
+      // stay crawlable so search engines can render the site correctly.
+      disallow: ["/admin", "/api"],
+    },
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }
